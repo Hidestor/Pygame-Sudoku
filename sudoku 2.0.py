@@ -36,7 +36,7 @@ YELLOW   = (255, 255,   0)
 ORANGE   = (255, 128,   0)
 PURPLE   = (255,   0, 255)
 CYAN     = (  0, 255, 255)
-
+ORIGINAL = (128, 128, 255) #this colour is used for the boxes that are already filled
 
 # setting colours of the different game parameters
 BOXCOLOUR = GRAY #before filling the value
@@ -44,7 +44,6 @@ HIGHLIGHT = CYAN #on mouse hover
 CLICKED = BLUE #upon finalizing the selected value
 BGCOLOUR = NAVYBLUE #Background colour
 TEXTCOLOUR = BLACK 
-ORIGINAL = (128, 128, 255)
 LINECOLOUR = ORANGE #boundary lines
 
 #initializing pygame
@@ -53,7 +52,7 @@ pygame.init()
 #building the surface object with height = 500 and width = 500
 DISPLAYSURF=pygame.display.set_mode((WINDOWHEIGHT,WINDOWWIDTH))
 FPSCLOCK=pygame.time.Clock() #for frames per second
-pygame.display.set_caption('Sudoku Masters')
+pygame.display.set_caption('Sudoku Masters') #To title the window opened
 
 #Font
 smallFont=pygame.font.Font('./arial.ttf',16)
@@ -64,9 +63,11 @@ largeFont.set_italic(True)
 def main():
 	while True:
 		smallFont.set_bold(False)
-		welcomeScr()
 		pygame.mixer.music.load('./intro.mp3') #file containing the music to be played were loaded
 		pygame.mixer.music.play(-1,0.0)
+		
+		welcomeScr()
+				
 		DISPLAYSURF.fill(BGCOLOUR) #setting the background of our surface 
 		smallFont.set_bold(True)
 
@@ -297,7 +298,7 @@ def welcomeScr():
 	pygame.display.update() #updating the display surface
 	time.sleep(2) #pause for a two seconds for the 'Welcome to Sudoku Masters' text
 	
-	#second screen showing the name of the maker
+	#second screen showing the name of the author
 	DISPLAYSURF.fill(BGCOLOUR)
 	welcomeMessage=largeFont.render('Created by: $hikhar $harma',True,CYAN)
 	welcomeRect=welcomeMessage.get_rect()
@@ -317,8 +318,10 @@ def displayCurrent(displayedBoard,originalBoard):
 				#parameters passed to Rect() functions are 'x','y' coordinate of starting point and 'width' and 'height'
 				currBox=pygame.Rect(LEFTMARGIN+BOXMARGIN+BOXSIZE*col,TOPMARGIN+BOXMARGIN+BOXSIZE*row,BOXEFF,BOXEFF)
 				if originalBoard[row][col]==0:
+					#if its a blank i.e value to be added by gamer
 					pygame.draw.rect(DISPLAYSURF,CLICKED,currBox)
 				else:
+					#if value is already filled
 					pygame.draw.rect(DISPLAYSURF,ORIGINAL,currBox)
 				data=smallFont.render(str(displayedBoard[row][col]),True,TEXTCOLOUR)
 				dataRect=data.get_rect()
@@ -326,6 +329,8 @@ def displayCurrent(displayedBoard,originalBoard):
 				DISPLAYSURF.blit(data,dataRect)
 			else:
 				pygame.draw.rect(DISPLAYSURF,BOXCOLOUR,(LEFTMARGIN+BOXMARGIN+BOXSIZE*col,TOPMARGIN+BOXMARGIN+BOXSIZE*row,BOXEFF,BOXEFF))
+	
+	#Drawing orange line to margin the 3x3 grid
 	for row in range(8):
 		width=2
 		if row==2 or row==5:
@@ -359,7 +364,7 @@ def highLight(row,col,displayedBoard,originalBoard):
 	if originalBoard[row][col]!=0:
 		return
 	currBox=pygame.Rect(LEFTMARGIN+BOXMARGIN+BOXSIZE*col,TOPMARGIN+BOXMARGIN+BOXSIZE*row,BOXEFF,BOXEFF)
-	pygame.draw.rect(DISPLAYSURF,HIGHLIGHT,currBox)
+	pygame.draw.rect(DISPLAYSURF,HIGHLIGHT,currBox) #Drawing highlighted box woth cyan colour
 	if displayedBoard[row][col]==0:
 		return
 	data=smallFont.render(str(displayedBoard[row][col]),True,TEXTCOLOUR)
