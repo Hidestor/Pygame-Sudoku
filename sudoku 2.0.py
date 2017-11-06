@@ -62,7 +62,7 @@ def main():
 	while True:
 		smallFont.set_bold(False)
 		welcomeScr()
-		pygame.mixer.music.load('./intro.mp3')
+		pygame.mixer.music.load('./intro.mp3') #file containing the music to be played were loaded
 		pygame.mixer.music.play(-1,0.0)
 		DISPLAYSURF.fill(BGCOLOUR) #setting the background of our surface 
 		smallFont.set_bold(True)
@@ -141,7 +141,8 @@ def main():
 					else:
 						continue
 					break
-
+			
+			#Displaying all the information we have built on the background to the surface
 			pygame.display.update()
 			if hasWon(displayedBoard):#check for win
 				pygame.mixer.music.stop()
@@ -283,9 +284,9 @@ def welcomeScr():
 	welcomeRect.center=(WINDOWWIDTH/2,WINDOWHEIGHT/2)
 	DISPLAYSURF.blit(welcomeMessage,welcomeRect)
 	pygame.display.update()
-	time.sleep(2)
+	time.sleep(2) #pause for a two seconds
 	DISPLAYSURF.fill(BGCOLOUR)
-	welcomeMessage=smallFont.render('Created by blah blah...',True,WHITE)
+	welcomeMessage=smallFont.render('Created by Shikhar Sharma',True,WHITE)
 	welcomeRect=welcomeMessage.get_rect()
 	welcomeRect.center=(WINDOWWIDTH/2+100,WINDOWHEIGHT/2+100)
 	DISPLAYSURF.blit(welcomeMessage,welcomeRect)
