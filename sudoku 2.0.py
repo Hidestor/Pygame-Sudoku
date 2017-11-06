@@ -1,10 +1,9 @@
-'''
-This is an interactive sudoku game
-Author: arkyaC
-Date of Creation: 3rd April 2k16
-'''
 
-import pygame,sys,random,time
+import sys
+import pygame
+import random
+import time
+
 from pygame.locals import *
 from copy import deepcopy
 
@@ -16,33 +15,41 @@ TOPMARGIN = 20
 BOXMARGIN = 2
 BOXEFF = BOXSIZE - 2*BOXMARGIN
 
+#frames per second
 FPS = 30
 
+
+#pygame doesn't prvide support for colours so we need to define our own colours based on RGB format
 #            R    G    B
-GRAY     = (100, 100, 100)
-NAVYBLUE = ( 60,  60, 100)
 WHITE    = (255, 255, 255)
+BLACK    = (  0,   0,   0)
+
 RED      = (255,   0,   0)
 GREEN    = (  0, 255,   0)
 BLUE     = (  0,   0, 255)
+
+GRAY     = (100, 100, 100)
+NAVYBLUE = ( 60,  60, 100)
 YELLOW   = (255, 255,   0)
 ORANGE   = (255, 128,   0)
 PURPLE   = (255,   0, 255)
 CYAN     = (  0, 255, 255)
-BLACK    = (  0,   0,   0)
 
-BOXCOLOUR = GRAY
-HIGHLIGHT = CYAN
-CLICKED = BLUE
+
+BOXCOLOUR = GRAY #before filling the value
+HIGHLIGHT = CYAN #on mouse hover
+CLICKED = BLUE #upon finalizing the selected value
 BGCOLOUR = NAVYBLUE
 TEXTCOLOUR = BLACK
 ORIGINAL = (128, 128, 255)
-LINECOLOUR = ORANGE
+LINECOLOUR = ORANGE #boundary lines
 
+#initializing pygame
 pygame.init()
 
+#building the surface object with height = 500 and width = 500
 DISPLAYSURF=pygame.display.set_mode((WINDOWHEIGHT,WINDOWWIDTH))
-FPSCLOCK=pygame.time.Clock()
+FPSCLOCK=pygame.time.Clock() #form frames per second
 pygame.display.set_caption('Sudoku Masters')
 
 #Font
@@ -51,14 +58,13 @@ largeFont=pygame.font.Font('./arial.ttf',28)
 largeFont.set_italic(True)
 
 
-
 def main():
 	while True:
 		smallFont.set_bold(False)
 		welcomeScr()
 		pygame.mixer.music.load('./intro.mp3')
 		pygame.mixer.music.play(-1,0.0)
-		DISPLAYSURF.fill(BGCOLOUR)
+		DISPLAYSURF.fill(BGCOLOUR) #setting the background of our surface 
 		smallFont.set_bold(True)
 
 		mousex = 0
@@ -88,6 +94,17 @@ def main():
 			DISPLAYSURF.fill(BGCOLOUR) # drawing the window
 			displayCurrent(displayedBoard,originalBoard)
 
+			#Event Handling
+		
+			#some of the types :
+			#1- QUIT
+			#2- ACTIVEEVENT
+			#3- KEYDOWN
+			#4- KEYUP
+			#5- MOUSEMOTION
+			#6- MOUSEBUTTONUP
+			#7- MOUSEBUTTONDOWN
+			
 			for event in pygame.event.get():
 
 				if event.type == QUIT:
@@ -95,14 +112,14 @@ def main():
 					sys.exit()
 				
 				elif event.type==MOUSEMOTION:
-					mousex,mousey=event.pos
+					mousex,mousey=event.pos #to get the mouse position
 					
 				elif event.type==MOUSEBUTTONUP and not clickedPrev:
 					mousex,mousey=event.pos
 					mouseClicked=True
 					clickedPrev=True
 				elif event.type==KEYUP and clickedPrev:
-					keyPressed=event.key
+					keyPressed=event.key #get the key that is pressed after mouse hover
 
 			row,col = getBoxAtPixel(mousex,mousey)#extract info about mouse position
 			
@@ -179,8 +196,8 @@ def isSafe(board,row,col,num):
 			return False
 		if board[row][i]==num:
 			return False
-	for i in range (row/3*3,row/3*3+3):
-		for j in range (col/3*3,col/3*3+3):
+	for i in range (row//3*3,row//3*3+3):
+		for j in range (col//3*3,col//3*3+3):
 			if board[i][j]==num:
 				return False
 	return True
@@ -314,10 +331,10 @@ def getBoxAtPixel(x,y):
 	for row in range(0,9):
 		for col in range(0,9):
 			left, top = leftTopCoordsOfBox(col, row)
-	   		boxRect = pygame.Rect(left,top,BOXEFF,BOXEFF)
-	   		
-	   		if boxRect.collidepoint(x, y):
-	   			return (row, col)
+			boxRect = pygame.Rect(left,top,BOXEFF,BOXEFF)
+			
+			if boxRect.collidepoint(x, y):
+				return (row, col)
 	return (None,None)
 
 def highLight(row,col,displayedBoard,originalBoard):
