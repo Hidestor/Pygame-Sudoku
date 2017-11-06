@@ -1,3 +1,4 @@
+# An interactive game of Sudoku developed in pygame(GUI)
 
 import sys
 import pygame
@@ -7,13 +8,14 @@ import time
 from pygame.locals import *
 from copy import deepcopy
 
+#Defining game window parameters
 WINDOWHEIGHT = 500
 WINDOWWIDTH = 500
-BOXSIZE = 50
-LEFTMARGIN = 25
+BOXSIZE = 50 #where digits are filled
+LEFTMARGIN = 25 
 TOPMARGIN = 20
 BOXMARGIN = 2
-BOXEFF = BOXSIZE - 2*BOXMARGIN
+BOXEFF = BOXSIZE - 2*BOXMARGIN #effective box size
 
 #frames per second
 FPS = 30
@@ -36,11 +38,12 @@ PURPLE   = (255,   0, 255)
 CYAN     = (  0, 255, 255)
 
 
+# setting colours of the different game parameters
 BOXCOLOUR = GRAY #before filling the value
 HIGHLIGHT = CYAN #on mouse hover
 CLICKED = BLUE #upon finalizing the selected value
-BGCOLOUR = NAVYBLUE
-TEXTCOLOUR = BLACK
+BGCOLOUR = NAVYBLUE #Background colour
+TEXTCOLOUR = BLACK 
 ORIGINAL = (128, 128, 255)
 LINECOLOUR = ORANGE #boundary lines
 
@@ -49,7 +52,7 @@ pygame.init()
 
 #building the surface object with height = 500 and width = 500
 DISPLAYSURF=pygame.display.set_mode((WINDOWHEIGHT,WINDOWWIDTH))
-FPSCLOCK=pygame.time.Clock() #form frames per second
+FPSCLOCK=pygame.time.Clock() #for frames per second
 pygame.display.set_caption('Sudoku Masters')
 
 #Font
@@ -178,26 +181,32 @@ def pressedKey(keyPr):
 		return 9
 	else:
 		return 0
-
+	
+	
+#Takes a partially filled-in grid and attempts to assign values to
+#all unassigned locations in such a way to meet the requirements
+#for Sudoku solution (non-duplication across rows, columns, and boxes)	
 def fillUp(board):
+	#box is a list variable that keeps the record of row and col in findUnassigned() function    
 	box = [0,0]
-	if not findUnassigned(board,box):
+	#If there is no unassigned location, we are done
+	if not findUnassigned(board,box): 
 		return True
-	for i in range(1,10):
-		if(isSafe(board,box[0],box[1],i)):
+	for i in range(1,10): #consider digits 1 to 9
+		if(isSafe(board,box[0],box[1],i)): #if looks promising
 			board[box[0]][box[1]]=i
 			if(fillUp(board)): #solvable
 				return True
-			board[box[0]][box[1]]=0
+			board[box[0]][box[1]]=0 #failure, unmake & try again
 	return False #backtrack
 
 def isSafe(board,row,col,num):
 	for i in range (9):
-		if board[i][col]==num:
+		if board[i][col]==num: #checking in current column
 			return False
-		if board[row][i]==num:
+		if board[row][i]==num: #checking in current row
 			return False
-	for i in range (row//3*3,row//3*3+3):
+	for i in range (row//3*3,row//3*3+3): #checking in current 3x3 grid
 		for j in range (col//3*3,col//3*3+3):
 			if board[i][j]==num:
 				return False
@@ -278,20 +287,26 @@ def findUnassigned(board,box):
 		return True
 
 def welcomeScr():
+	
+	#first screen displaying 'Welcome to Sudoku Masters'
 	DISPLAYSURF.fill(BGCOLOUR)
 	welcomeMessage=largeFont.render('Welcome to Sudoku Masters',True,WHITE)
+	welcomeRect=welcomeMessage.get_rect() # welcome rectangle is used to position the text on the display surface
+	welcomeRect.center=(WINDOWWIDTH/2,WINDOWHEIGHT/2) #center of display surface
+	DISPLAYSURF.blit(welcomeMessage,welcomeRect) #placing the text on screen and at the mid of the display surface 
+	pygame.display.update() #updating the display surface
+	time.sleep(2) #pause for a two seconds for the 'Welcome to Sudoku Masters' text
+	
+	#second screen showing the name of the maker
+	DISPLAYSURF.fill(BGCOLOUR)
+	welcomeMessage=largeFont.render('Created by: $hikhar $harma',True,CYAN)
 	welcomeRect=welcomeMessage.get_rect()
 	welcomeRect.center=(WINDOWWIDTH/2,WINDOWHEIGHT/2)
 	DISPLAYSURF.blit(welcomeMessage,welcomeRect)
 	pygame.display.update()
-	time.sleep(2) #pause for a two seconds
-	DISPLAYSURF.fill(BGCOLOUR)
-	welcomeMessage=smallFont.render('Created by Shikhar Sharma',True,WHITE)
-	welcomeRect=welcomeMessage.get_rect()
-	welcomeRect.center=(WINDOWWIDTH/2+100,WINDOWHEIGHT/2+100)
-	DISPLAYSURF.blit(welcomeMessage,welcomeRect)
-	pygame.display.update()
-	time.sleep(1)
+	time.sleep(1.5)
+	
+	#3rd and final screen where the actual sudoku is drawn
 	DISPLAYSURF.fill(BGCOLOUR)
 	pygame.display.update()
 
@@ -299,6 +314,7 @@ def displayCurrent(displayedBoard,originalBoard):
 	for row in range(9):
 		for col in range(9):
 			if displayedBoard[row][col]!=0:
+				#parameters passed to Rect() functions are 'x','y' coordinate of starting point and 'width' and 'height'
 				currBox=pygame.Rect(LEFTMARGIN+BOXMARGIN+BOXSIZE*col,TOPMARGIN+BOXMARGIN+BOXSIZE*row,BOXEFF,BOXEFF)
 				if originalBoard[row][col]==0:
 					pygame.draw.rect(DISPLAYSURF,CLICKED,currBox)
